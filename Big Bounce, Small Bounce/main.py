@@ -1,8 +1,7 @@
 import pygame
 import sys
 import random
-import pygame_widgets
-from pygame_widgets.slider import Slider
+
 import time
 #Test
 
@@ -14,7 +13,7 @@ class Teleporter(pygame.sprite.Sprite):
         self.posx = posx
         self.posy = posy
         self.size = size
-        self.image = pygame.image.load("Teleporter.png").convert_alpha()
+        self.image = pygame.image.load("images/Teleporter.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.size,15))
         self.image = pygame.transform.rotate(self.image, rotation)
         self.rect = self.image.get_rect(center = (self.posx,self.posy)) #680
@@ -37,7 +36,7 @@ class Floor(pygame.sprite.Sprite):
         self.rift_maker_instance = RiftMaker_instance
         self.rift_maker_instance.grounds.append(self)
         self.posx = posx
-        self.image = pygame.image.load("Boden.png").convert_alpha()
+        self.image = pygame.image.load("images/Boden.png").convert_alpha()
         self.rect = self.image.get_rect(center = (self.posx,700))
         self.hitbox = pygame.Rect(self.rect)
         self.is_Spike = False
@@ -53,7 +52,7 @@ class Laser(pygame.sprite.Sprite):
     def __init__(self,posx,posy,group,rotation):
         super().__init__(group)
         
-        self.image = pygame.image.load("Laser.png").convert_alpha()
+        self.image = pygame.image.load("images/Laser.png").convert_alpha()
         self.image = pygame.transform.rotate(self.image, rotation)
         self.rect = self.image.get_rect(center = (posx,posy))
         self.hitbox = pygame.Rect(self.rect)
@@ -154,7 +153,8 @@ class RiftMaker():
                 self.hindernis5(self.grounds[-1].rect.center[0])
             if self.Zufall == 6:
                 self.hindernis6(self.grounds[-1].rect.center[0])
-                
+            global score
+            score +=1
             self.objects.pop(0)
 
     def update(self):
@@ -283,16 +283,17 @@ all_sprites = pygame.sprite.Group()
 screen = pygame.display.set_mode((width, height))
 
 #constanten
-Sky = pygame.image.load("Background.png")
-Mountains = pygame.image.load("Mountain.png")
-Sonne = pygame.image.load("Sonne.png")
-StartScreen = pygame.image.load("TitleScreen.png")
-Hint1 = pygame.image.load("Hint1.png")
-Hint2 = pygame.image.load("Hint2.png")
+Sky = pygame.image.load("images/Background.png")
+Mountains = pygame.image.load("images/Mountain.png")
+Sonne = pygame.image.load("images/Sonne.png")
+StartScreen = pygame.image.load("images/TitleScreen.png")
+Hint1 = pygame.image.load("images/Hint1.png")
+Hint2 = pygame.image.load("images/Hint2.png")
 
-Music = pygame.mixer.Sound("Noice.mp3")
-TP = pygame.mixer.Sound("TP.mp3")
-LaserSound = pygame.mixer.Sound("Laser.mp3")
+Music = pygame.mixer.Sound("Sound/Noice.mp3")
+LaserSound = pygame.mixer.Sound("Sound/laserWAV.wav")
+TP = pygame.mixer.Sound("Sound/TP.mp3")
+
 pygame.mixer.Sound.play(Music)
 
 #globale Variabeln
@@ -300,7 +301,8 @@ global scrollx
 scrollx = 0
 global game_over
 game_over = True
-score = 2000
+global score
+score = 0
 
 global hint1
 hint1 = True
@@ -314,7 +316,7 @@ while True:
     while game_over == True:
         
         screen.blit(StartScreen,(0,0))
-        label = myfont.render("SCORE: "+str(score-2000), 1, (217,0,41))
+        label = myfont.render("SCORE: "+str(score), 1, (217,0,41))
         screen.blit(label, (950, 100))
         if hint1 == True:
             screen.blit(Hint1,(830,160))
@@ -356,8 +358,7 @@ while True:
         screen.blit(Sky, (0, 0))
         screen.blit(Sonne,(250,-250))
         screen.blit(Mountains,(250,-180))
-        score = RiftMaker.grounds[-1].posx
-        label = myfont.render("SCORE: "+str(score-2000), 1, (217,0,41))
+        label = myfont.render("SCORE: "+str(score), 1, (217,0,41))
         screen.blit(label, (width//2-100, 10))
 
         player.update()
